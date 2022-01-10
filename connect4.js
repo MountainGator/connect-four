@@ -197,6 +197,5 @@ e.preventDefault();
     for (let piece of pieces){
       piece.remove();
     }
-    
   });
 }

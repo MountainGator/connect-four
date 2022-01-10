@@ -11,15 +11,7 @@ const startBtn = document.querySelector('#start');
 startBtn.addEventListener('click', mainGame);
 const resetBtn = document.querySelector('#reset');
 resetBtn.addEventListener('click', () => location.reload());
-const clearBoard = document.querySelector('#clear');
-clearBoard.addEventListener('click', (e) => {
-  e.preventDefault();
-  const pieces = document.querySelectorAll('.piece');
-  console.log(pieces);
-  for (let piece of pieces){
-    piece.remove();
-  }
-});
+
 
 function mainGame (e) {
 e.preventDefault();
@@ -117,19 +109,19 @@ e.preventDefault();
 
     // place piece in board and add to HTML table
    
-    board[y][x] = currPlayer; //I got this to work but I don't understand why it works, lol...
+    board[y][x] = currPlayer; //I don't understand why it works, lol...
     placeInTable(y, x);
 
     // check for win
     if (checkForWin()) {
-      return endGame(`Player ${currPlayer} won!`);
+      return endGame(`${currPlayer} won!`);
       
     }
 
     // check for tie
     // TODO: check if all cells in board are filled; if so call, call endGame
     
-    
+    //can't figure this out. This should work but it doesn't
     if (board.every(n => n.every(c => c))) { 
           return endGame('Nice one, losers');
         }
@@ -160,15 +152,17 @@ e.preventDefault();
 
     // TODO: read and understand this code. Add comments to help you.
 
-    for (let y = 0; y < HEIGHT; y++) {
-      for (let x = 0; x < WIDTH; x++) {
+    for (let y = 0; y < HEIGHT; y++) //loop through rows 
+    {
+      for (let x = 0; x < WIDTH; x++) //loop through columns inside of rows 
+      { //these put 4 cells together horizontally, vertically, AND diagonally
         let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
         let vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
         let diagDR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]];
         let diagDL = [[y, x], [y + 1, x - 1], [y + 2, x - 2], [y + 3, x - 3]];
 
         if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
-          return true;
+          return true; // this checks to see if there are 4 in a row, and then the _win function takes that input and returns true if they are all 4 the same. 
         }
       }
     }
@@ -194,4 +188,15 @@ e.preventDefault();
     wide.value = '';
     high.value = '';
   }
+
+  const clearBoard = document.querySelector('#clear');
+  clearBoard.addEventListener('click', (e) => {
+    e.preventDefault();
+    const pieces = document.querySelectorAll('.piece');
+    
+    for (let piece of pieces){
+      piece.remove();
+    }
+    
+  });
 }

@@ -17,10 +17,9 @@ function mainGame (e) {
 e.preventDefault();
   if (wide.value >= 4 && high.value >= 4 && wide.value <= 20 && high.value <= 20) {
   startBtn.style.pointerEvents = 'none';
-  
 
-  let WIDTH = wide.value;
-  let HEIGHT = high.value;
+  const WIDTH = wide.value;
+  const HEIGHT = high.value;
 
   let currPlayer = 1; // active player: 1 or 2
   let board = []; // array of rows, each row is array of cells  (board[y][x])
@@ -31,17 +30,18 @@ e.preventDefault();
 
   function makeBoard() {
     
-    while (board.length <= HEIGHT) {
+    while (board.length <= HEIGHT - 1) {
       board.push(Array.from({length: WIDTH}));
     }
-    console.log(board);
   }
 
   /** makeHtmlBoard: make HTML table and row of column tops. */
 
   function makeHtmlBoard() {
-    
-    const htmlBoard = document.getElementById('board');
+    //my mentor showed me that it was better to create the elements dynamically so that I could reset them later
+    const htmlBoard = document.createElement('table');
+    const divGame = document.getElementById('game');
+    htmlBoard.setAttribute('id', 'board');
     // create top row and add click event listener to the cells
     const top = document.createElement("tr");
     top.setAttribute("id", "column-top");
@@ -64,6 +64,7 @@ e.preventDefault();
       }
       htmlBoard.append(row);
     }
+    divGame.append(htmlBoard); 
   }
 
   /** findSpotForCol: given column x, return top empty y (null if filled) */
@@ -114,7 +115,7 @@ e.preventDefault();
 
     // check for win
     if (checkForWin()) {
-      return endGame(`${currPlayer} won!`);
+      return endGame(`player ${currPlayer} won!`);
       
     }
 
@@ -122,6 +123,7 @@ e.preventDefault();
     // TODO: check if all cells in board are filled; if so call, call endGame
     
     //can't figure this out. This should work but it doesn't
+    // my mentor figured out that my while loop was the issue. I had it set for <= HEIGHT but it needed to be HEIGHT - 1
     if (board.every(n => n.every(c => c))) { 
           return endGame('Nice one, losers');
         }
@@ -132,6 +134,36 @@ e.preventDefault();
     currPlayer === 1 ? currPlayer ++ : currPlayer --;
   }
 
+  //my mentor helped me figure this out. it lets you clear pieces to start a new game
+const clearBoard = document.querySelector('#clear'); 
+clearBoard.addEventListener('click', (e) => {
+  e.preventDefault();
+  const tableBoard = document.getElementById('board');
+  tableBoard.remove();
+
+  makeBoard()
+  makeHtmlBoard()
+
+  console.log(board)
+
+  for(let h=0; h < HEIGHT; h++){
+    for(let w=0; w < WIDTH; w++){
+      if(typeof(board[h][w]) !== 'undefined'){
+        board[h][w] = undefined
+      }
+    }
+  }
+  
+//this was my code. I asked my mentor to help me figure out how ot make it work, because it was only removing the HTML divs, but not resetting the board array
+// const clearBoard = document.querySelector('#clear'); 
+// clearBoard.addEventListener('click', (e) => {
+//   e.preventDefault();
+//   const pieces = document.querySelectorAll('.piece');
+
+//   for (let piece of pieces){
+//     piece.remove();
+//   }   
+});
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
   function checkForWin() {
@@ -188,14 +220,5 @@ e.preventDefault();
     wide.value = '';
     high.value = '';
   }
-
-  const clearBoard = document.querySelector('#clear');
-  clearBoard.addEventListener('click', (e) => {
-    e.preventDefault();
-    const pieces = document.querySelectorAll('.piece');
-    
-    for (let piece of pieces){
-      piece.remove();
-    }
-  });
+  
 }
